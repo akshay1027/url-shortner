@@ -7,6 +7,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
+// Background returns a non-nil, empty Context. typically used while initialization!
 var Ctx = context.Background()
 
 func CreateClient(dbNo int) *redis.Client {
