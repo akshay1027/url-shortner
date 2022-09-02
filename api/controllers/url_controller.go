@@ -56,7 +56,8 @@ func ShortenURL(c *fiber.Ctx) error {
 	// check if the input is an actual URL
 	if !govalidator.IsURL(body.URL) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid URL",
+			"success": false,
+			"error":   "Invalid URL",
 		})
 	}
 
@@ -66,7 +67,8 @@ func ShortenURL(c *fiber.Ctx) error {
 	// leading to a inifite loop, so don't accept the domain for shortening
 	if !helpers.RemoveDomainError(body.URL) {
 		return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{
-			"error": "haha... nice try",
+			"success": false,
+			"error":   "Domain error in url",
 		})
 	}
 
@@ -101,6 +103,9 @@ func ShortenURL(c *fiber.Ctx) error {
 	if body.Expiry == 0 {
 		body.Expiry = 24 // default expiry of 24 hours
 	}
+
+	println(body.URL)
+	println(id)
 	err = r.Set(database.Ctx, id, body.URL, body.Expiry*3600*time.Second).Err()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -160,5 +165,9 @@ func ResolveURL(c *fiber.Ctx) error {
 	rInr.Incr(database.Ctx, "counter")
 
 	// redirect to original URL
-	return c.Redirect(value, 301)
+	// return c.Redirect(value, 301)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"Success": false,
+		"value":   value,
+	})
 }
