@@ -8,6 +8,6 @@ import (
 
 func UserRoute(app *fiber.App) {
 	//All routes related to urls comes here
-	app.Get("/:url", controllers.ResolveURL)
+	app.Get("api/v1/:url", controllers.ResolveURL)
 	app.Post("/api/v1", controllers.ShortenURL)
 }
